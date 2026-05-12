@@ -1,0 +1,17 @@
+[Unit]
+Description=Print EVE Net Policy Routing Runtime Status
+Documentation=file:/usr/share/doc/eve-net/README.md
+ConditionPathExists=/etc/eve-net/policy.json
+
+[Service]
+Type=oneshot
+Environment=RUST_LOG=info
+ExecStart=/usr/local/bin/eve-net status --config /etc/eve-net/policy.json
+
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+ProtectSystem=full
+ReadOnlyPaths=/etc/eve-net

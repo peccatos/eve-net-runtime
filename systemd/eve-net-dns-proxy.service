@@ -1,0 +1,27 @@
+[Unit]
+Description=EVE Net Local DNS Proxy / Interception Layer
+Documentation=file:/usr/share/doc/eve-net/README.md
+Wants=network-online.target
+After=network-online.target eve-net.service
+ConditionPathExists=/etc/eve-net/policy.json
+
+[Service]
+Type=simple
+Environment=RUST_LOG=info
+ExecStart=/usr/local/bin/eve-net dns-proxy --config /etc/eve-net/policy.json --apply
+Restart=on-failure
+RestartSec=3s
+TimeoutStartSec=15s
+KillSignal=SIGINT
+
+# Binding 127.0.0.1:5533 does not require privileged CAP_NET_BIND_SERVICE.
+# Cache writes require /var/lib/eve-net. No kernel-network mutation is done by this service in v0.10.
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+ProtectSystem=full
+ReadOnlyPaths=/etc/eve-net
+ReadWritePaths=/var/lib/eve-net
+
+[Install]
+WantedBy=multi-user.target

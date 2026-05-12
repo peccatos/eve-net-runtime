@@ -1,0 +1,14 @@
+target/
+.agents/
+.codex/
+*.swp
+*.tmp
+
+# Local scratch artifacts seen in this workspace.
+/l.a
+/wlo1
+/wg0
+/wg1
+/amn0
+/192.168.0.1
+/192.168.0.106

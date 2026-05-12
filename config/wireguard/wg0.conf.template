@@ -1,0 +1,16 @@
+# EVE Net WireGuard template for wg0
+# Copy to /etc/wireguard/wg0.conf, replace placeholders, chmod 600, then run:
+#   sudo wg-quick up wg0
+# Do NOT commit real private keys.
+
+[Interface]
+PrivateKey = REPLACE_WITH_CLIENT_PRIVATE_KEY
+Address = 10.66.0.2/32
+# DNS is intentionally not forced here. eve-net routes selected traffic by nft/fwmark.
+# DNS = 1.1.1.1
+
+[Peer]
+PublicKey = REPLACE_WITH_SERVER_PUBLIC_KEY
+Endpoint = REPLACE_WITH_SERVER_HOST_OR_IP:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
