@@ -1,0 +1,15 @@
+[package]
+name = "eve-net"
+version = "0.11.4"
+edition = "2021"
+description = "Policy-based Linux egress routing runtime for Wi-Fi underlay and multiple outbound channels"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "signal", "net"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }

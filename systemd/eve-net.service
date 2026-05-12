@@ -1,0 +1,29 @@
+[Unit]
+Description=EVE Net Policy Routing Runtime
+Documentation=file:/usr/share/doc/eve-net/README.md
+Wants=network-online.target
+After=network-online.target NetworkManager-wait-online.service
+ConditionPathExists=/etc/eve-net/policy.json
+
+[Service]
+Type=simple
+Environment=RUST_LOG=info
+ExecStart=/usr/local/bin/eve-net run --config /etc/eve-net/policy.json --apply
+Restart=on-failure
+RestartSec=3s
+TimeoutStartSec=30s
+KillSignal=SIGINT
+
+# Network mutation requires CAP_NET_ADMIN. ICMP healthchecks may require CAP_NET_RAW.
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+NoNewPrivileges=true
+
+# Conservative filesystem isolation. The runtime reads /etc/eve-net/policy.json and mutates kernel networking via netlink.
+ProtectHome=true
+PrivateTmp=true
+ProtectSystem=full
+ReadOnlyPaths=/etc/eve-net
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "runtime": {
+    "dry_run": true,
+    "interval_sec": 15,
+    "fail_closed": true,
+    "auto_refresh_direct_egress": true
+  },
+  "nft": {
+    "table": "eve_net",
+    "output_chain": "output_mangle"
+  },
+  "wifi_underlay": {
+    "interface": "wlo1",
+    "allowed_bands": [
+      "2.4GHz",
+      "5GHz"
+    ],
+    "note": "Example Wi-Fi underlay. Adjust the interface name and routing details for the target host. Wi-Fi band selection is handled by NetworkManager or the driver; eve-net controls egress routing above that layer."
+  },
+  "egress_interfaces": [
+    {
+      "enabled": true,
+      "name": "wlo1",
+      "kind": "direct",
+      "table": 100,
+      "fwmark": 100,
+      "rule_priority": 1000,
+      "healthcheck": {
+        "enabled": false,
+        "target_ip": "1.1.1.1",
+        "timeout_ms": 1500
+      },
+      "gateway": "192.168.0.1",
+      "source_ip": "192.168.0.10"
+    },
+    {
+      "enabled": false,
+      "name": "wg0",
+      "kind": "wireguard",
+      "table": 200,
+      "fwmark": 200,
+      "rule_priority": 1001,
+      "healthcheck": {
+        "enabled": true,
+        "target_ip": "1.1.1.1",
+        "timeout_ms": 1500
+      },
+      "gateway": null,
+      "source_ip": null
+    },
+    {
+      "enabled": false,
+      "name": "wg1",
+      "kind": "wireguard",
+      "table": 300,
+      "fwmark": 300,
+      "rule_priority": 1002,
+      "healthcheck": {
+        "enabled": true,
+        "target_ip": "8.8.8.8",
+        "timeout_ms": 1500
+      },
+      "gateway": null,
+      "source_ip": null
+    },
+    {
+      "enabled": false,
+      "name": "amn0",
+      "kind": "tunnel",
+      "table": 250,
+      "fwmark": 250,
+      "rule_priority": 1010,
+      "healthcheck": {
+        "enabled": false,
+        "target_ip": "1.1.1.1",
+        "timeout_ms": 1500
+      },
+      "gateway": null,
+      "source_ip": null
+    }
+  ],
+  "policies": [
+    {
+      "id": "cloudflare-dns-through-direct-wifi",
+      "enabled": true,
+      "match": {
+        "dest_ip": "1.1.1.1"
+      },
+      "action": {
+        "egress": "wlo1"
+      }
+    },
+    {
+      "id": "google-dns-through-direct-wifi",
+      "enabled": true,
+      "match": {
+        "dest_ip": "8.8.8.8"
+      },
+      "action": {
+        "egress": "wlo1"
+      }
+    },
+    {
+      "id": "cloudflare-dns-through-wg0-template",
+      "enabled": false,
+      "match": {
+        "dest_ip": "1.1.1.1"
+      },
+      "action": {
+        "egress": "wg0"
+      }
+    },
+    {
+      "id": "google-dns-through-wg1-template",
+      "enabled": false,
+      "match": {
+        "dest_ip": "8.8.8.8"
+      },
+      "action": {
+        "egress": "wg1"
+      }
+    },
+    {
+      "id": "example-domain-through-amnezia-template",
+      "enabled": false,
+      "match": {
+        "domain": "example.com"
+      },
+      "action": {
+        "egress": "amn0"
+      }
+    }
+  ],
+  "dns_cache": {
+    "enabled": true,
+    "path": "/var/lib/eve-net/dns-cache.json",
+    "ttl_sec": 300,
+    "stale_grace_sec": 3600,
+    "fail_closed_unresolved": true,
+    "unresolved_domain_mode": "soft_fail_closed_l3",
+    "dns_interception_enabled": false
+  },
+  "dns_interception": {
+    "enabled": false,
+    "listen_addr": "127.0.0.1:5533",
+    "upstream_addr": "1.1.1.1:53",
+    "upstreams": [
+      "1.1.1.1:53"
+    ],
+    "timeout_ms": 1500,
+    "cache_answers": true,
+    "deny_unresolved_policy_domains": true,
+    "deny_aaaa_for_policy_domains": true,
+    "audit_log_queries": true,
+    "auto_redirect_enabled": false
+  }
+}

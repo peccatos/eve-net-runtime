@@ -1,0 +1,16 @@
+[Unit]
+Description=Prune EVE Net DNS Cache
+Documentation=file:/usr/share/doc/eve-net/README.md
+ConditionPathExists=/etc/eve-net/policy.json
+
+[Service]
+Type=oneshot
+Environment=RUST_LOG=info
+ExecStart=/usr/local/bin/eve-net dns-prune --config /etc/eve-net/policy.json --apply
+
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+ProtectSystem=full
+ReadOnlyPaths=/etc/eve-net
+ReadWritePaths=/var/lib/eve-net
