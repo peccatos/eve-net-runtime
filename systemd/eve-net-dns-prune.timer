@@ -1,0 +1,13 @@
+[Unit]
+Description=Run EVE Net DNS Cache Prune Periodically
+Documentation=file:/usr/share/doc/eve-net/README.md
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1h
+AccuracySec=1min
+Persistent=true
+Unit=eve-net-dns-prune.service
+
+[Install]
+WantedBy=timers.target

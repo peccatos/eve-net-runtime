@@ -1,0 +1,20 @@
+[Unit]
+Description=Cleanup EVE Net Policy Routing Runtime State
+Documentation=file:/usr/share/doc/eve-net/README.md
+After=network-online.target
+ConditionPathExists=/etc/eve-net/policy.json
+Conflicts=eve-net.service
+Before=eve-net.service
+
+[Service]
+Type=oneshot
+Environment=RUST_LOG=info
+ExecStart=/usr/local/bin/eve-net cleanup --config /etc/eve-net/policy.json --apply --verbose
+
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+ProtectSystem=full
+ReadOnlyPaths=/etc/eve-net

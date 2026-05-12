@@ -1,0 +1,13 @@
+[Unit]
+Description=Run EVE Net DNS Cache Refresh Periodically
+Documentation=file:/usr/share/doc/eve-net/README.md
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5min
+AccuracySec=15s
+Persistent=true
+Unit=eve-net-dns-refresh.service
+
+[Install]
+WantedBy=timers.target
